@@ -39,7 +39,7 @@ var router = express.Router();
 
 router.post('/slack-reservation', function (req, res, next) {
       console.log(req);
-      res.send(req.body.challenge)
+      res.send(req.body.challenge);
 });
 
 module.exports = router;
