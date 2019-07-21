@@ -2,7 +2,17 @@ var express = require('express');
 var router = express.Router();
 var axios = require('axios');
 
-const { slack } = require('../secrets.json');
+var slack = {};
+
+if (process.env.NODE_ENV !== 'production') {
+  slack = require('../secrets.json').slack;
+} else {
+  slack = {
+    one: process.env.SLACK_ONE,
+    two: process.env.SLACK_TWO,
+    three: process.env.SLACK_THREE,
+  }
+}
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
