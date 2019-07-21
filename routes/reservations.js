@@ -1,45 +1,43 @@
 var express = require('express');
 var router = express.Router();
+var axios = require('axios');
 
-// const secrets = require('../secrets.json');
-// const accountSid = secrets.twilio.sid;
-// const authToken = secrets.twilio.authToken;
-// const client = require('twilio')(accountSid, authToken);
+// /api
 
-/* GET reservations. */
-// router.get('/sms-reservation', function (req, res, next) {
-//       client.messages
-//             .create({ body: 'Hi there!', from: secrets.twilio.twilioPhone, to: secrets.twilio.pavelPhone })
-//             .catch(err => {
-//                   console.error(err);
-//                   next();
-//             })
-//             .then(message => console.log(message)).done();
+var slack = {};
 
-//       res.json(
-//             [{
-//                   id: 1,
-//                   name: 'avena'
-//             },
-//             {
-//                   id: 2,
-//                   name: 'bar piti'
-//             },
-//             {
-//                   id: 3,
-//                   name: 'cipriani'
-//             },
-//             {
-//                   id: 4,
-//                   name: 'left bank'
-//             }
-//             ]
-//       );
-// });
+if (process.env.NODE_ENV !== 'production') {
+      slack = require('../secrets.json').slack;
+} else {
+      slack = {
+            one: process.env.SLACK_ONE,
+            two: process.env.SLACK_TWO,
+            three: process.env.SLACK_THREE,
+      }
+}
+
+router.post('/slack-confirmation', function (req, res, next) {
+      console.log('request to confirm was made \n\n', req.body);
+      res.send(req.body.challenge);
+});
+
+router.post('/slack-hello', function (req, res, next) {
+      (async () => {
+            try {
+                  await axios.post(`https://hooks.slack.com/services/${slack.one}/${slack.two}/${slack.three}`, {
+                        "text": "second message"
+                  });
+
+            } catch (e) {
+                  console.error(e);
+            }
+      })();
+
+      res.render('index', { title: 'Check the channel' });
+});
 
 router.post('/slack-reservation', function (req, res, next) {
-      console.log(req);
-      res.send(req.body.challenge);
+      console.log('request to slack reservation\n\n', req.body);
 });
 
 module.exports = router;
