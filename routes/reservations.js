@@ -68,9 +68,9 @@ router.post('/slack-reservation', function (req, res, next) {
                   console.error(e);
             }
       })();
-}
+
       console.log('request to slack reservation\n\n', req.body);
-res.send(req.body.challenge);
+      res.send(req.body.challenge);
 });
 
 module.exports = router;
