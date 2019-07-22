@@ -57,16 +57,18 @@ router.post('/slack-reservation', function (req, res, next) {
             replyText = `Please try again for a time, use the keyword 'at'`;
       } else {
             replyText = `Got your table for ${obj.guests} at ${obj.time}`;
-            (async () => {
-                  try {
-                        await axios.post(`https://hooks.slack.com/services/${slack.TEAM_ID}/${slack.two}/${slack.three}`, {
-                              "text": replyText
-                        });
-                  } catch (e) {
-                        console.error(e);
-                  }
-            })();
       }
+
+      (async () => {
+            try {
+                  await axios.post(`https://hooks.slack.com/services/${slack.TEAM_ID}/${slack.two}/${slack.three}`, {
+                        "text": replyText
+                  });
+            } catch (e) {
+                  console.error(e);
+            }
+      })();
+
       console.log('request to slack reservation\n\n', req.body);
       res.send(req.body.challenge);
 });
