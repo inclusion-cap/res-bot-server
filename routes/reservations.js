@@ -10,7 +10,7 @@ if (process.env.NODE_ENV !== 'production') {
       slack = require('../secrets.json').slack;
 } else {
       slack = {
-            one: process.env.TEAM_ID,
+            TEAM_ID: process.env.TEAM_ID,
             two: process.env.SLACK_TWO,
             three: process.env.SLACK_THREE,
       }
@@ -96,6 +96,7 @@ router.post('/slack-reservation', function (req, res, next) {
             })();
       }
       console.log('request to slack reservation\n\n', req.body);
+      res.send(req.body.challenge);
 });
 
 module.exports = router;
