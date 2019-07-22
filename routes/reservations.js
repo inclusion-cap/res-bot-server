@@ -17,6 +17,35 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 router.post('/slack-confirmation', function (req, res, next) {
+      let text = req.body.text.split(' ');
+      let obj = {};
+
+
+      for (let i = 0; i < text.length; i++) {
+            if (text[i].toLowerCase() === 'for') {
+                  obj.guests = text[i + 1];
+            }
+            if (text[i].toLowerCase() === 'at') {
+                  obj.time = text[i + 1];
+            }
+      }
+      let replyText = '';
+      if (!obj.hasOwnProperty('guests')) {
+            replyText = `Please try again for number of guests, use the keyword "for" `;
+      } else if (!obj.hasOwnProperty('time')) {
+            replyText = `Please try again for a time, use the keyword "at" `;
+      } else {
+            replyText = `Got your table for ${obj.guests} at ${obj.time}`;
+            (async () => {
+                  try {
+                        await axios.post(`https://hooks.slack.com/services/${slack.TEAM_ID}/${slack.two}/${slack.three}`, {
+                              "text": replyText
+                        });
+                  } catch (e) {
+                        console.error(e);
+                  }
+            })();
+      }
       console.log('request to confirm was made \n\n', req.body);
       res.send(req.body.challenge);
 });
@@ -40,24 +69,32 @@ router.post('/slack-reservation', function (req, res, next) {
       let text = req.body.text.split(' ');
       let obj = {};
 
+
       for (let i = 0; i < text.length; i++) {
-            if (text[i] === 'for') {
+            if (text[i].toLowerCase() === 'for') {
                   obj.guests = text[i + 1];
             }
-            if (text[i] === 'at') {
+            if (text[i].toLowerCase() === 'at') {
                   obj.time = text[i + 1];
             }
       }
-
-      (async () => {
-            try {
-                  await axios.post(`https://hooks.slack.com/services/${slack.TEAM_ID}/${slack.two}/${slack.three}`, {
-                        "text": `yas queen, got your table for ${obj.guests} at ${obj.time}`
-                  });
-            } catch (e) {
-                  console.error(e);
-            }
-      })();
+      let replyText = '';
+      if (!obj.hasOwnProperty('guests')) {
+            replyText = `Please try again for number of guests, use the keyword "for" `;
+      } else if (!obj.hasOwnProperty('time')) {
+            replyText = `Please try again for a time, use the keyword "at" `;
+      } else {
+            replyText = `Got your table for ${obj.guests} at ${obj.time}`;
+            (async () => {
+                  try {
+                        await axios.post(`https://hooks.slack.com/services/${slack.TEAM_ID}/${slack.two}/${slack.three}`, {
+                              "text": replyText
+                        });
+                  } catch (e) {
+                        console.error(e);
+                  }
+            })();
+      }
       console.log('request to slack reservation\n\n', req.body);
 });
 
